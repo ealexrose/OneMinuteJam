@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class MonsterController : MonoBehaviour
 {
 
@@ -31,7 +31,10 @@ public class MonsterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetButtonDown("Reset")) 
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     void MonsterMove()
@@ -125,16 +128,29 @@ public class MonsterController : MonoBehaviour
                 }
                 transform.position = targetPosition;
 
-                GameObject tile = gridController.GetGridObjectAtCoordinates(new Vector2Int((int)transform.position.x + 4, (int)transform.position.y + 4));
+                GameObject tile = gridController.GetGridObjectAtCoordinates(new Vector2Int((int)transform.position.x + Mathf.FloorToInt(gridController.width / 2f), (int)transform.position.y + Mathf.FloorToInt(gridController.width / 2f)));
                 tile.GetComponent<SpriteRenderer>().color = paintColor;
-                GameManager.instance.playerTurn = true;
+
             }
+            yield return new WaitForSeconds(0.1f);
+            if ((Vector2)transform.position == GameManager.instance.playerCoordinates && monsterType == player.colorState)
+            {
+                Die();
+            }
+
+            GameManager.instance.playerTurn = true;
         }
 
 
 
 
-    }
 
+
+    }
+    public void Die()
+    {
+
+        SceneManager.LoadScene(0);
+    }
 
 }

@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        gridController = FindObjectOfType<GridController>();
     }
 
     // Update is called once per frame
@@ -34,27 +35,27 @@ public class PlayerController : MonoBehaviour
     {
         bool moved = false;
 
-        if (Input.GetButtonDown("Left")) 
+        if (Input.GetButtonDown("Left") && transform.position.x >  -(Mathf.FloorToInt(gridController.width / 2f))) 
         {
             transform.position += (Vector3)Vector2.left;
             GameManager.instance.playerCoordinates.x--;
             moved = true;
         }
-        if (Input.GetButtonDown("Right")) 
+        if (Input.GetButtonDown("Right") && transform.position.x < (Mathf.FloorToInt(gridController.width / 2f) )) 
         {
             transform.position += (Vector3)Vector2.right;
             GameManager.instance.playerCoordinates.x++;
             moved = true;
         }
 
-        if (Input.GetButtonDown("Up")) 
+        if (Input.GetButtonDown("Up") && transform.position.y < (Mathf.FloorToInt(gridController.width / 2f) )) 
         {
             transform.position += (Vector3)Vector2.up;
             GameManager.instance.playerCoordinates.y++;
             moved = true;
         }
 
-        if (Input.GetButtonDown("Down")) 
+        if (Input.GetButtonDown("Down") && transform.position.y > -(Mathf.FloorToInt(gridController.width / 2f) )) 
         {
             transform.position += (Vector3)Vector2.down;
             GameManager.instance.playerCoordinates.y--;

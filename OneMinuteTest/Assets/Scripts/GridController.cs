@@ -81,7 +81,7 @@ public class GridController : MonoBehaviour
                 {
                     for (int i = column.Count; i < height; i++)
                     {
-                        column.Add(PrefabUtility.InstantiatePrefab(gridObject) as GameObject);
+                        //column.Add(PrefabUtility.InstantiatePrefab(gridObject) as GameObject);
                         column[column.Count - 1].transform.parent = transform;
                     }
                 }
@@ -206,6 +206,6 @@ public class GridController : MonoBehaviour
 
     public GameObject GetGridObjectAtCoordinates(Vector2Int coordinates) 
     {
-        return gameObject.transform.GetChild(((coordinates.y )  + (coordinates.x * width))).gameObject;
+        return gameObject.transform.GetChild(((coordinates.y)  + (coordinates.x * width))).gameObject;
     }
 }
