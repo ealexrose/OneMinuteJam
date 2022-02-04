@@ -8,14 +8,15 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public TileController[,] grid = new TileController[8, 8];
     public Vector2Int playerCoordinates;
-    public bool isPlayerTurn;
+    public bool isPlayerTurn = true;
     public PlayerController player;
     public List<EnemyController> enemies = new List<EnemyController>();
     public static event Action LoadLevel;
 
 
 
-    private void Awake()
+    // Start is called before the first frame update
+    void Start()
     {
         if (!instance)
         {
@@ -26,13 +27,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
-    }
 
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
         player = FindObjectOfType<PlayerController>();
 
         player.transform.position = grid[playerCoordinates.x, playerCoordinates.y].playerTarget.position;
@@ -46,6 +41,15 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    private void OnEnable()
+    {
+        PlayerController.PlayerMoves += StartMonsterTurn;
+    }
+    private void OnDisable()
+    {
+        PlayerController.PlayerMoves -= StartMonsterTurn;
     }
 
     public bool CanPlayerMoveToTile(Vector2Int tilePosition)
@@ -87,7 +91,7 @@ public class GameManager : MonoBehaviour
 
     internal void UpdateMonsterPosition(int index, Vector2Int targetCoordinates)
     {
-        enemies[index].transform.position = grid[targetCoordinates.x, targetCoordinates.y].enemyTarget.position;
+        //enemies[index].transform.position = grid[targetCoordinates.x, targetCoordinates.y].enemyTarget.position;
         enemies[index].currentCoordinates = targetCoordinates;
     }
 
@@ -125,40 +129,44 @@ public class GameManager : MonoBehaviour
     {
         if (Math.Abs(targetCoordinates.x - startCoordinates.x) > Math.Abs(targetCoordinates.y - startCoordinates.y))
         {
-            if (targetCoordinates.x - startCoordinates.x < 0)
+            if (targetCoordinates.x - startCoordinates.x < 0 && MonsterCanEnter(startCoordinates + Vector2Int.left))
             {
-                if (MonsterCanEnter(startCoordinates + Vector2Int.left))
-                {
-                    return startCoordinates + Vector2Int.left;
-                }
-            }
-            else if (targetCoordinates.x - startCoordinates.x > 0)
-            {
-                if (MonsterCanEnter(startCoordinates + Vector2Int.right))
-                {
-                    return startCoordinates + Vector2Int.right;
-                }
+
+                return startCoordinates + Vector2Int.left;
 
             }
+            else if (targetCoordinates.x - startCoordinates.x > 0 && MonsterCanEnter(startCoordinates + Vector2Int.right))
+            {
+
+                return startCoordinates + Vector2Int.right;
+            }
         }
-        else 
+
+        if (targetCoordinates.y - startCoordinates.y > 0 && MonsterCanEnter(startCoordinates + Vector2Int.up))
         {
-            if (targetCoordinates.y - startCoordinates.y > 0)
-            {
-                if (MonsterCanEnter(startCoordinates + Vector2Int.up))
-                {
-                    return startCoordinates + Vector2Int.up;
-                }
-            }
-            else if (targetCoordinates.y - startCoordinates.y < 0)
-            {
-                if (MonsterCanEnter(startCoordinates + Vector2Int.down))
-                {
-                    return startCoordinates + Vector2Int.down;
-                }
 
-            }
+            return startCoordinates + Vector2Int.up;
+
         }
+        else if (targetCoordinates.y - startCoordinates.y < 0 && MonsterCanEnter(startCoordinates + Vector2Int.down))
+        {
+
+            return startCoordinates + Vector2Int.down;
+
+        }
+
+        if (targetCoordinates.x - startCoordinates.x < 0 && MonsterCanEnter(startCoordinates + Vector2Int.left))
+        {
+
+            return startCoordinates + Vector2Int.left;
+
+        }
+        else if (targetCoordinates.x - startCoordinates.x > 0 && MonsterCanEnter(startCoordinates + Vector2Int.right))
+        {
+
+            return startCoordinates + Vector2Int.right;
+        }
+
 
         return startCoordinates;
     }
@@ -168,8 +176,19 @@ public class GameManager : MonoBehaviour
         if ((tileCoordinates.x < 0 || tileCoordinates.y < 0 || tileCoordinates.x >= grid.GetLength(0) || tileCoordinates.y >= grid.GetLength(0)))
         {
             return false;
+
+        }
+        else if (grid[tileCoordinates.x, tileCoordinates.y] == null)
+        {
+            return false;
+
         }
 
         return grid[tileCoordinates.x, tileCoordinates.y].IsOpenToMonster();
+    }
+
+    private void StartMonsterTurn()
+    {
+        isPlayerTurn = false;
     }
 }

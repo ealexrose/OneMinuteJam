@@ -12,19 +12,22 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+
         HandlePlayerMovement();
+
+
     }
 
-    void HandlePlayerMovement() 
+    void HandlePlayerMovement()
     {
 
-        if (Input.GetButtonDown("Left")) 
+        if (Input.GetButtonDown("Left"))
         {
             AttemptMovement(GameManager.instance.playerCoordinates + Vector2Int.left);
         }
@@ -45,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
     private void AttemptMovement(Vector2Int targetCoordinates)
     {
-        if (GameManager.instance.CanPlayerMoveToTile(targetCoordinates) && GameManager.instance.isPlayerTurn) 
+        if (GameManager.instance.CanPlayerMoveToTile(targetCoordinates) && GameManager.instance.isPlayerTurn)
         {
             transform.position = GameManager.instance.GetGridTile(targetCoordinates).playerTarget.position;
             GameManager.instance.UpdatePlayerPosition(targetCoordinates);
