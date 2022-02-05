@@ -31,12 +31,14 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && GameManager.instance.isPlayerTurn)
         {
+
             SwitchColors();
         }
     }
 
     private void SwitchColors()
     {
+        AudioManager.instance.Play("Switch");
         colorIndex++;
         if (colorIndex > maxColorIndex)
         {
@@ -118,7 +120,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 angles = transform.localRotation.eulerAngles;
-
+        AudioManager.instance.Play("Step");
         animator.SetTrigger("Hop");
         new WaitForSeconds(.23f);
         for (float i = 0; i < .23f; i += Time.deltaTime)
@@ -170,6 +172,7 @@ public class PlayerController : MonoBehaviour
     }
     public void Kill()
     {
+        AudioManager.instance.Play("Death");
         animator.SetTrigger("Death");
         playerSkin.material.color = GameManager.instance.playerColors.colorKeys[3].color;
         FindObjectOfType<BonusEffects>().LoseAnimation();

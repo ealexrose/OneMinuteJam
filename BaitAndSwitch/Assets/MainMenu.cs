@@ -22,14 +22,16 @@ public class MainMenu : MonoBehaviour
 
     public void Quit() 
     {
-
+        AudioManager.instance.Play("Bell");
+        AudioManager.instance.Play("Rumble");
         Application.Quit();
 
     }
 
     public void StartGame() 
     {
-
+        AudioManager.instance.Play("Bell");
+        AudioManager.instance.Play("Rumble");
         GameManager.instance.StartGame();
         menuAnimator.SetTrigger("FadeMenuOut");
     }

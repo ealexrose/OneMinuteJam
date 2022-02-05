@@ -15,14 +15,17 @@ public class EnemyController : MonoBehaviour
 
     public GameObject skinMaterial;
     public GameObject bottomMaterial;
+    public GameObject altHead;
     // Start is called before the first frame update
     void Start()
     {
         GameManager.instance.AddEnemyToList(this);
         skinMaterial.GetComponent<MeshRenderer>().material.SetColor("_Color", GameManager.instance.monsterColors.colorKeys[colorState].color);
+        altHead.GetComponent<MeshRenderer>().material.SetColor("_Color", GameManager.instance.monsterColors.colorKeys[colorState].color);
         bottomMaterial.GetComponent<MeshRenderer>().material.color = GameManager.instance.monsterColors.colorKeys[colorState].color;
         skinMaterial.SetActive(false);
         bottomMaterial.SetActive(false);
+        altHead.SetActive(false);
     }
 
 
@@ -39,6 +42,7 @@ public class EnemyController : MonoBehaviour
             GameManager.instance.player.Kill();
             skinMaterial.SetActive(false);
             bottomMaterial.SetActive(false);
+            altHead.SetActive(false);
         }
     }
 
@@ -105,16 +109,21 @@ public class EnemyController : MonoBehaviour
 
 
         GameManager.instance.UpdateMonsterPosition(index, targetCoordinates);
-
+        AudioManager.instance.Play("Woosh");
         myAnimator.SetTrigger("Move");
-        yield return new WaitForSeconds(1.05f);
-
+        yield return new WaitForSeconds(1.1f);
+        skinMaterial.SetActive(false);
+        altHead.SetActive(true);
         myAnimator.SetTrigger("Stop");
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         UpdateMonsterPosition();
         GameManager.instance.isPlayerTurn = true;
+        altHead.SetActive(false);
+        yield return new WaitForEndOfFrame();
+        skinMaterial.SetActive(true);
         yield return null;
+
     }
 
     public void UpdateMonsterPosition()
@@ -126,6 +135,10 @@ public class EnemyController : MonoBehaviour
     {
 
         currentTile.RecolorTile(colorState);
+        if (currentTile.goalColor == colorState) 
+        {
+            AudioManager.instance.Play("Correct");
+        }
 
     }
 

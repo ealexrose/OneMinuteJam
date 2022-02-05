@@ -11,11 +11,13 @@ public class RestartMenu : MonoBehaviour
     public void Restart() 
     {
         animator.SetTrigger("Restart");
-    
+        AudioManager.instance.Play("Bell");
+
     }
     public void LoadRestart() 
     {
         animator.SetTrigger("OpenMenu");
+
     }
     public void ReloadLevel() 
     {

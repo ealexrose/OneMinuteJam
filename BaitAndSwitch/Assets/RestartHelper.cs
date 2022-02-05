@@ -8,5 +8,6 @@ public class RestartHelper : MonoBehaviour
     public void RestartHelpFunction() 
     {
         restartMenu.ReloadLevel();
+
     }
 }

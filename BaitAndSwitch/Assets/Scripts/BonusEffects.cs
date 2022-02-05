@@ -29,11 +29,6 @@ public class BonusEffects : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire2")) 
-        {
-            
-            WinAnimation();
-        }
         if (doWaveStuff)
         {
             timePassed += Time.deltaTime;
@@ -130,6 +125,8 @@ public class BonusEffects : MonoBehaviour
 
     public void WinAnimation() 
     {
+        AudioManager.instance.Play("Win");
+        AudioManager.instance.Play("Bell");
         //Hide Monsters
         foreach (EnemyController monster in FindObjectsOfType<EnemyController>()) 
         {
