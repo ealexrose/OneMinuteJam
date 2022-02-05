@@ -13,23 +13,22 @@ public class GameManager : MonoBehaviour
     public List<EnemyController> enemies = new List<EnemyController>();
     public static event Action LoadLevel;
 
-
+    public Gradient monsterColors;
+    public Gradient playerColors;
+    public Gradient tileColors;
+    public Gradient edgeColors;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!instance)
-        {
-            instance = this;
-            LoadLevel?.Invoke();
-        }
-        else
-        {
-            Destroy(this);
-        }
+
+        instance = this;
+        LoadLevel?.Invoke();
+
 
         player = FindObjectOfType<PlayerController>();
 
+        player.transform.parent = grid[playerCoordinates.x, playerCoordinates.y].playerTarget;
         player.transform.position = grid[playerCoordinates.x, playerCoordinates.y].playerTarget.position;
         player.currentPosition = grid[playerCoordinates.x, playerCoordinates.y];
 
@@ -40,7 +39,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (WinCondition())
+        {
+            Debug.Log("You Win!");
+        }
     }
 
     private void OnEnable()
@@ -93,6 +95,7 @@ public class GameManager : MonoBehaviour
     {
         //enemies[index].transform.position = grid[targetCoordinates.x, targetCoordinates.y].enemyTarget.position;
         enemies[index].currentCoordinates = targetCoordinates;
+        enemies[index].currentTile = grid[targetCoordinates.x, targetCoordinates.y];
     }
 
     internal void AddTileToGrid(TileController tileController, Vector2Int tileCoordinates)
@@ -191,4 +194,26 @@ public class GameManager : MonoBehaviour
     {
         isPlayerTurn = false;
     }
+
+    public bool WinCondition()
+    {
+        bool win = true;
+        for (int i = 0; i < grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < grid.GetLength(1); j++)
+            {
+                if (grid[i, j] && !grid[i, j].IsGoal())
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void StartGame()
+    {
+        FindObjectOfType<BonusEffects>().RiseUp();
+    }
+
 }

@@ -12,10 +12,17 @@ public class EnemyController : MonoBehaviour
     public int colorState;
     public int index;
     MeshRenderer torusRenderer;
+
+    public GameObject skinMaterial;
+    public GameObject bottomMaterial;
     // Start is called before the first frame update
     void Start()
     {
         GameManager.instance.AddEnemyToList(this);
+        skinMaterial.GetComponent<MeshRenderer>().material.SetColor("_Color", GameManager.instance.monsterColors.colorKeys[colorState].color);
+        bottomMaterial.GetComponent<MeshRenderer>().material.color = GameManager.instance.monsterColors.colorKeys[colorState].color;
+        skinMaterial.SetActive(false);
+        bottomMaterial.SetActive(false);
     }
 
     // Update is called once per frame
@@ -52,6 +59,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator MonsterMove(Vector2Int targetCoordinates)
     {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f,.4f));
         float targetRotation = 0f;
         if (targetCoordinates.x > currentCoordinates.x) 
         {
@@ -78,9 +86,11 @@ public class EnemyController : MonoBehaviour
         
         myAnimator.SetTrigger("Move");
         yield return new WaitForSeconds(1f);
+       
         myAnimator.SetTrigger("Stop");
         yield return null;
-        yield return null;        
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
         UpdateMonsterPosition();
         GameManager.instance.isPlayerTurn = true;
         yield return null;
@@ -90,5 +100,41 @@ public class EnemyController : MonoBehaviour
     {
         transform.position = GameManager.instance.grid[currentCoordinates.x, currentCoordinates.y].enemyTarget.position;
     }
+
+    public void ColorTile() 
+    {
+
+        currentTile.RecolorTile(colorState);
+    
+    }
+
+    public void RiseUp() 
+    {
+        StartCoroutine(RiseUpEnumerator());
+    
+    }
+
+    IEnumerator RiseUpEnumerator() 
+    {
+        transform.parent = currentTile.enemyTarget;
+        transform.localPosition = Vector3.down * 5f;
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(UnityEngine.Random.Range(1, 6)* 0.15f);
+        currentTile.RecolorTile(colorState);
+        skinMaterial.SetActive(true);
+        bottomMaterial.SetActive(true);
+        for (float i = 0; i < .8f; i += Time.deltaTime) 
+        {
+            transform.localPosition = Vector3.Lerp(Vector3.down * 5f, Vector3.zero, i / .8f);
+            yield return null;
+        }
+        transform.localPosition = Vector3.zero;
+        GameManager.instance.isPlayerTurn = true;
+        transform.parent = null;
+
+    
+    }
+
 }
 

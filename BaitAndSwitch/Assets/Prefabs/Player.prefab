@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!95 &47193318718140144
+--- !u!95 &2430100587004010710
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -63,8 +63,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2765bab883fe77544aa1fef0bea18937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minColorIndex: 0
+  maxColorIndex: 0
   currentPosition: {fileID: 0}
   colorIndex: 0
+  animator: {fileID: 2430100587004010710}
+  playerSkin: {fileID: 3695673271169572128}
 --- !u!1001 &7269057405860050997
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -132,6 +136,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MC(1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3564783574603935192, guid: bf4be5be31ea52f42b7b9fc25aa2d5e1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6316661801115329813, guid: bf4be5be31ea52f42b7b9fc25aa2d5e1, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -146,5 +154,10 @@ GameObject:
 --- !u!4 &7163635257613787102 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bf4be5be31ea52f42b7b9fc25aa2d5e1, type: 3}
+  m_PrefabInstance: {fileID: 7269057405860050997}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &3695673271169572128 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6316661801115329813, guid: bf4be5be31ea52f42b7b9fc25aa2d5e1, type: 3}
   m_PrefabInstance: {fileID: 7269057405860050997}
   m_PrefabAsset: {fileID: 0}

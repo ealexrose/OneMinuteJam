@@ -14,17 +14,27 @@ public class BonusEffects : MonoBehaviour
     public float baseHeight = 5f;
     [Range(0.01f, 1f)]
     public float minClamp;
+
+    public bool RiseOnStart;
+    public bool doWaveStuff = false;
+    public float startHeight;
+    public float endHeight;
+    public float riseTime;
     // Start is called before the first frame update
     void Start()
     {
-
+        HideTiles();
     }
 
     // Update is called once per frame
     void Update()
     {
-        timePassed += Time.deltaTime;
-        WaveEffect();
+
+        if (doWaveStuff)
+        {
+            timePassed += Time.deltaTime;
+            WaveEffect();
+        }
     }
 
 
@@ -38,7 +48,7 @@ public class BonusEffects : MonoBehaviour
                 if (GameManager.instance.grid[i, j])
                 {
                     Vector3 position = GameManager.instance.grid[i, j].transform.position;
-                    position.y = baseHeight + Mathf.Clamp(Mathf.PerlinNoise((((float)i) * waveSpacer + (timePassed * waveSpeed)), (((float)j) * waveSpacer)), minClamp, 1f) * waveMagnitude;
+                    position.y = baseHeight + (Mathf.Clamp(Mathf.PerlinNoise((((float)i) * waveSpacer + (timePassed * waveSpeed)), (((float)j) * waveSpacer)), minClamp, 1f) -minClamp) * waveMagnitude;
                     GameManager.instance.grid[i, j].transform.position = position;
                 }
 
@@ -46,4 +56,73 @@ public class BonusEffects : MonoBehaviour
             }
         }
     }
+
+    public void RiseUp()
+    {
+        
+        for (int j = 0; j < GameManager.instance.grid.GetLength(0); j++)
+        {
+            for (int k = 0; k < GameManager.instance.grid.GetLength(1); k++)
+            {
+                int random = Random.Range(0, 8);
+                float randFloat = (float)random * 0.15f;
+                StartCoroutine(RiseEnumerator(GameManager.instance.grid[j, k], randFloat));
+            }
+        }
+        StartCoroutine(DelayWave(8f * 0.15f));
+    }
+
+    IEnumerator RiseEnumerator(TileController tile, float delay) 
+    {
+
+        Vector3 position = tile.transform.position;
+        position = tile.transform.position;
+        position.y = startHeight;
+        tile.transform.position = position;
+
+        yield return new WaitForSeconds(delay);
+        for (float i = 0f; i < riseTime + (riseTime * 0.2f); i += Time.deltaTime)
+        {
+            position = tile.transform.position;
+            position.y = Mathf.Lerp(startHeight, baseHeight * Mathf.Sin((Mathf.PI / 2) * 0.8f), Mathf.Sin((Mathf.PI / 2) * i / riseTime * 0.8f));
+            tile.transform.position = position;
+            yield return null;
+        }
+
+        position = tile.transform.position;
+        position.y = baseHeight;
+        tile.transform.position = position;
+    }
+    IEnumerator DelayWave(float delay) 
+    {
+        yield return new WaitForSeconds(delay);
+        doWaveStuff = true;
+        PlayerLanding();
+        yield return new WaitForSeconds(1.5f);
+        foreach (EnemyController monster in FindObjectsOfType<EnemyController>()) 
+        {
+            monster.RiseUp();
+        }
+    }
+    void PlayerLanding() 
+    {
+        FindObjectOfType<PlayerController>().PlayerDrop();
+    
+    }
+
+    void HideTiles() 
+    {
+
+        foreach (TileController tile in FindObjectsOfType<TileController>()) 
+        {
+            Vector3 position = tile.transform.position;
+            position = tile.transform.position;
+            position.y = startHeight;
+            tile.transform.position = position;
+
+        }
+
+    }
 }
+
+

@@ -21,4 +21,9 @@ public class MonsterAnimationHelper : MonoBehaviour
     {
         //enemyController.UpdateMonsterPosition();
     }
+
+    public void ColorTile() 
+    {
+        enemyController.ColorTile();
+    }
 }

@@ -81,6 +81,8 @@ MonoBehaviour:
   myAnimator: {fileID: 803450058599933393}
   colorState: 0
   index: 0
+  skinMaterial: {fileID: 6908042375767147865}
+  bottomMaterial: {fileID: 1862099887645570878}
 --- !u!1001 &803450058599933390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -170,5 +172,15 @@ GameObject:
 --- !u!4 &913338948336534053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3300f26cf44df4349bc814cb3e365ff3, type: 3}
+  m_PrefabInstance: {fileID: 803450058599933390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6908042375767147865 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3100686136978186089, guid: 3300f26cf44df4349bc814cb3e365ff3, type: 3}
+  m_PrefabInstance: {fileID: 803450058599933390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1862099887645570878 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1365132098506396400, guid: 3300f26cf44df4349bc814cb3e365ff3, type: 3}
   m_PrefabInstance: {fileID: 803450058599933390}
   m_PrefabAsset: {fileID: 0}
