@@ -26,4 +26,9 @@ public class MonsterAnimationHelper : MonoBehaviour
     {
         enemyController.ColorTile();
     }
+
+    public void Attack() 
+    {
+        enemyController.Attack();
+    }
 }

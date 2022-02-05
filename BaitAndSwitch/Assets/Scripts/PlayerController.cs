@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && GameManager.instance.isPlayerTurn)
         {
-            Debug.Log("Hi");
             SwitchColors();
         }
     }
@@ -81,7 +80,17 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator DoPlayerMoveAnimations(Vector2Int targetCoordinates)
     {
+        Vector2Int prevCoordinates = GameManager.instance.playerCoordinates;
         float currentRotation = transform.localRotation.eulerAngles.y;
+        bool willDie = false;
+        foreach (EnemyController enemy in FindObjectsOfType<EnemyController>())
+        {
+            if (enemy.currentCoordinates == targetCoordinates && enemy.colorState == GameManager.instance.GetPlayerState())
+            {
+                willDie = true;
+            }
+        }
+
         Vector3 startPos = transform.position;
         Vector3 targetPos = GameManager.instance.GetGridTile(targetCoordinates).playerTarget.position;
         if (Mathf.Approximately(currentRotation, 270f))
@@ -124,26 +133,51 @@ public class PlayerController : MonoBehaviour
         for (float i = 0; i < .23f; i += Time.deltaTime)
         {
             transform.position = Vector3.Lerp(startPos, targetPos, i / .23f);
+            if (willDie && i > (.23f / 2f))
+            {
+                transform.position = Vector3.Lerp(targetPos, startPos, i / .23f);
+
+            }
+
             yield return null;
         }
-        animator.SetTrigger("Idle");
-        transform.position = GameManager.instance.GetGridTile(targetCoordinates).playerTarget.position;
-        transform.parent = GameManager.instance.GetGridTile(targetCoordinates).playerTarget;
+        if (!willDie)
+        {
+            animator.SetTrigger("Idle");
+            transform.position = GameManager.instance.GetGridTile(targetCoordinates).playerTarget.position;
+            transform.parent = GameManager.instance.GetGridTile(targetCoordinates).playerTarget;
+        }
+        else
+        {
+            GameManager.instance.playerCoordinates = prevCoordinates;
+            Kill();
+        }
 
-        
         yield return null;
     }
 
-    public void PlayerDrop() 
+    public void PlayerDrop()
     {
-        StartCoroutine(PlayerDropEnumerator());        
-    
+        StartCoroutine(PlayerDropEnumerator());
+
     }
 
-    IEnumerator PlayerDropEnumerator() 
+    IEnumerator PlayerDropEnumerator()
     {
         animator.SetTrigger("Drop");
         yield return new WaitForEndOfFrame();
         playerSkin.gameObject.SetActive(true);
+    }
+    public void Kill()
+    {
+        animator.SetTrigger("Death");
+        playerSkin.material.color = GameManager.instance.playerColors.colorKeys[3].color;
+        FindObjectOfType<BonusEffects>().LoseAnimation();
+        FindObjectOfType<RestartMenu>().LoadRestart();
+    }
+
+    public void Win()
+    {
+        animator.SetTrigger("Win");
     }
 }

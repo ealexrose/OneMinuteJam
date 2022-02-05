@@ -29,7 +29,11 @@ public class BonusEffects : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetButtonDown("Fire2")) 
+        {
+            
+            WinAnimation();
+        }
         if (doWaveStuff)
         {
             timePassed += Time.deltaTime;
@@ -123,6 +127,88 @@ public class BonusEffects : MonoBehaviour
         }
 
     }
+
+    public void WinAnimation() 
+    {
+        //Hide Monsters
+        foreach (EnemyController monster in FindObjectsOfType<EnemyController>()) 
+        {
+            monster.transform.parent = monster.currentTile.enemyTarget;
+            StartCoroutine(HideMonster(monster));
+        }
+        //Drop Tiles
+        doWaveStuff = false;
+        foreach (TileController tile in FindObjectsOfType<TileController>()) 
+        {
+            if (tile.tileCoordinates != GameManager.instance.playerCoordinates && tile.goalColor == 0) 
+            {
+                
+                StartCoroutine(SinkTiles(tile));
+            }
+        }
+        //Make Player Jump
+        FindObjectOfType<PlayerController>().Win();
+
+
+    }
+
+    public void LoseAnimation()
+    {
+        //Hide Monsters
+        foreach (EnemyController monster in FindObjectsOfType<EnemyController>())
+        {
+            monster.transform.parent = monster.currentTile.enemyTarget;
+            StartCoroutine(HideMonster(monster));
+        }
+        //Drop Tiles
+        doWaveStuff = false;
+        foreach (TileController tile in FindObjectsOfType<TileController>())
+        {
+            if (tile.tileCoordinates != GameManager.instance.playerCoordinates)
+            {
+                StartCoroutine(SinkTiles(tile));
+            }
+        }
+
+
+
+    }
+
+    private IEnumerator HideMonster(EnemyController monster)
+    {
+        Vector3 position = monster.transform.localPosition;
+        Vector3 startPos = position;
+        for (float i = 0; i < 0.4f; i += Time.deltaTime) 
+        {
+            position.y = Mathf.Lerp(startPos.y, -9f, i / 0.4f);
+            monster.transform.localPosition = position;
+            yield return null;
+        }
+    }
+
+    IEnumerator SinkTiles(TileController tile) 
+    {
+        Vector3 startPosition = tile.transform.position;
+        Vector3 position = tile.transform.position;
+        position = tile.transform.position;
+       
+        int random = Random.Range(0, 8);
+        float randFloat = (float)random * 0.15f;
+        yield return new WaitForSeconds(randFloat);
+
+        for (float i = 0; i < 0.8f; i += Time.deltaTime) 
+        {
+            position.y = Mathf.Lerp(startPosition.y,-5f, i / 0.8f);
+            tile.transform.position = position;
+
+            yield return null;
+        }
+        position.y = -5f;
+        tile.transform.position = position;
+
+    }
+
+
 }
 
 

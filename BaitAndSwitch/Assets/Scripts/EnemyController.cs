@@ -25,10 +25,21 @@ public class EnemyController : MonoBehaviour
         bottomMaterial.SetActive(false);
     }
 
+
+
     // Update is called once per frame
     void Update()
     {
 
+    }
+    internal void Attack()
+    {
+        if (currentCoordinates == GameManager.instance.playerCoordinates && colorState == GameManager.instance.GetPlayerState())
+        {
+            GameManager.instance.player.Kill();
+            skinMaterial.SetActive(false);
+            bottomMaterial.SetActive(false);
+        }
     }
 
     private void OnEnable()
@@ -47,29 +58,40 @@ public class EnemyController : MonoBehaviour
         {
             //Get Pathfinding point
             Vector2Int target = GameManager.instance.GetNextSpotTowardsPoint(currentCoordinates, GameManager.instance.playerCoordinates);
-            
+
             //Move to point if there is one to move to
-            if (target != currentCoordinates) 
+            if (target != currentCoordinates)
             {
                 StartCoroutine(MonsterMove(target));
+            }
+            else
+            {
+                StartCoroutine(DelayPlayer());
             }
         }
 
     }
 
+    private IEnumerator DelayPlayer()
+    {
+
+        yield return new WaitForSeconds(1f);
+        GameManager.instance.isPlayerTurn = true;
+
+    }
     IEnumerator MonsterMove(Vector2Int targetCoordinates)
     {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f,.4f));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.2f, .4f));
         float targetRotation = 0f;
-        if (targetCoordinates.x > currentCoordinates.x) 
+        if (targetCoordinates.x > currentCoordinates.x)
         {
             targetRotation = -90f;
         }
-        if (targetCoordinates.y > currentCoordinates.y) 
+        if (targetCoordinates.y > currentCoordinates.y)
         {
             targetRotation = 180f;
         }
-        if (targetCoordinates.x < currentCoordinates.x) 
+        if (targetCoordinates.x < currentCoordinates.x)
         {
             targetRotation = 90f;
         }
@@ -78,17 +100,16 @@ public class EnemyController : MonoBehaviour
         //    targetRotation = 0f;
         //}
         Vector3 angles = transform.localRotation.eulerAngles;
-        angles.y  = targetRotation;
+        angles.y = targetRotation;
         transform.localRotation = Quaternion.Euler(angles);
 
 
         GameManager.instance.UpdateMonsterPosition(index, targetCoordinates);
-        
+
         myAnimator.SetTrigger("Move");
-        yield return new WaitForSeconds(1f);
-       
+        yield return new WaitForSeconds(1.05f);
+
         myAnimator.SetTrigger("Stop");
-        yield return null;
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         UpdateMonsterPosition();
@@ -96,44 +117,44 @@ public class EnemyController : MonoBehaviour
         yield return null;
     }
 
-    public void UpdateMonsterPosition() 
+    public void UpdateMonsterPosition()
     {
         transform.position = GameManager.instance.grid[currentCoordinates.x, currentCoordinates.y].enemyTarget.position;
     }
 
-    public void ColorTile() 
+    public void ColorTile()
     {
 
         currentTile.RecolorTile(colorState);
-    
+
     }
 
-    public void RiseUp() 
+    public void RiseUp()
     {
         StartCoroutine(RiseUpEnumerator());
-    
+
     }
 
-    IEnumerator RiseUpEnumerator() 
+    IEnumerator RiseUpEnumerator()
     {
         transform.parent = currentTile.enemyTarget;
-        transform.localPosition = Vector3.down * 5f;
+        transform.localPosition = Vector3.down * 8f;
 
         yield return new WaitForEndOfFrame();
-        yield return new WaitForSeconds(UnityEngine.Random.Range(1, 6)* 0.15f);
+        yield return new WaitForSeconds(UnityEngine.Random.Range(4, 9) * 0.15f);
         currentTile.RecolorTile(colorState);
         skinMaterial.SetActive(true);
         bottomMaterial.SetActive(true);
-        for (float i = 0; i < .8f; i += Time.deltaTime) 
+        for (float i = 0; i < 1.2; i += Time.deltaTime)
         {
-            transform.localPosition = Vector3.Lerp(Vector3.down * 5f, Vector3.zero, i / .8f);
+            transform.localPosition = Vector3.Lerp(Vector3.down * 8f, Vector3.zero, i / 1.2f);
             yield return null;
         }
         transform.localPosition = Vector3.zero;
         GameManager.instance.isPlayerTurn = true;
         transform.parent = null;
 
-    
+
     }
 
 }

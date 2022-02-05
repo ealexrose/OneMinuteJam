@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public Gradient playerColors;
     public Gradient tileColors;
     public Gradient edgeColors;
-
+    public bool isDead = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,9 +39,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (WinCondition())
+        if (WinCondition() && isPlayerTurn)
         {
-            Debug.Log("You Win!");
+            isPlayerTurn = false;
+            FindObjectOfType<BonusEffects>().WinAnimation();
         }
     }
 
